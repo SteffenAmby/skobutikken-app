@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title> Skobutikken </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-text-center">
+  <div *ngIf="!product && !scanning && !has_scanned" class="ion-padding">
+    <div>
+      <ion-text color="medium">
+        Scan en vare for at se varianter på lager</ion-text
+      >
+    </div>
+    <ion-icon
+      style="font-size: 50px"
+      color="medium"
+      name="barcode-outline"
+    ></ion-icon>
+  </div>
+
+  <div *ngIf="!product && !scanning && has_scanned" class="ion-padding">
+    <div>
+      <ion-text color="medium">
+        <div>Vi fandt desværre ingen produkter der matchede stregkoden:</div>
+        <strong>{{barcodeValue}}</strong>
+      </ion-text>
+    </div>
+  </div>
+
+  <div *ngIf="product && !scanning">
+    <h3><strong>{{product?.name}}</strong></h3>
+    <div>{{ barcodeValue }}</div>
+
+    <ion-card>
+      <ion-list>
+        <ion-list lines="full">
+          <ion-item *ngFor="let variation of product?.variations">
+            <ion-label> {{variation.name}} </ion-label>
+            <ion-badge slot="end">{{variation.stock}}</ion-badge>
+          </ion-item>
+        </ion-list>
+      </ion-list>
+    </ion-card>
+  </div>
+
+  <barcode-scanner-livestream
+    type="ean"
+    (valueChanges)="onValueChanges($event)"
+    (started)="(onStarted)"
+  ></barcode-scanner-livestream>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button *ngIf="!scanning" expand="block" (click)="scan()">
+      Scan
+    </ion-button>
+    <ion-button
+      color="danger"
+      *ngIf="scanning"
+      expand="block"
+      (click)="stopScan()"
+    >
+      Annuller</ion-button
+    >
+  </ion-toolbar>
+</ion-footer>
